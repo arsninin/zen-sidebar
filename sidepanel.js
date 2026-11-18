@@ -1,6 +1,18 @@
 const $ = s => document.querySelector(s);
 const DEF = { workspaces: [{ id: 'w1', name: 'Space 1', icon: '🏠' }], active: 'w1', map: {}, essentials: [], pins: {}, bind: {} };
-let S, tabs = [], newTabMode = false, timer;
+let S, tabs = [], newTabMode = false, tempUrl = false, timer;
+let prefs = { showTools: true, showUrl: true };
+async function loadPrefs() { const r = await chrome.storage.local.get('prefs'); prefs = { ...prefs, ...(r.prefs || {}) }; applyPrefs(); }
+function applyPrefs() {
+  // Hide the whole header, not only its buttons: otherwise its min-height
+  // leaves an empty strip above Essentials.
+  $('.top').hidden = !prefs.showTools;
+  $('#toptools').hidden = !prefs.showTools;
+  $('#urlbar').hidden = !prefs.showUrl && !tempUrl;
+  // Keep a divider only when at least one upper control is visible.
+  $('#topsep').hidden = !prefs.showTools && !prefs.showUrl && !tempUrl;
+}
+async function savePref(key, value) { prefs[key] = value; await chrome.storage.local.set({ prefs }); applyPrefs(); zlog.info('settings', 'preference changed', { key, value }); }
 
 function state(raw) {
   const x = raw && typeof raw === 'object' ? raw : {};
@@ -168,7 +180,7 @@ async function render() {
   const tl = $('#tabs'); tl.replaceChildren();
   tabs.filter(t => !bound.has(t.id) && (S.map[t.id] || S.workspaces[0].id) === ws.id).forEach(t => tl.append(row({
     dnd: ['tab', t.id],
-    title: t.title || t.pendingUrl || t.url || 'Новая вкладка', fav: favOf(t), on: t.active,
+    title: t.title || t.pendingUrl || t.url || 'Новая вкладка', fav: favOf(t), on: t.active, dead: t.status !== 'complete',
     click: () => chrome.tabs.update(t.id, { active: true }), close: () => chrome.tabs.remove(t.id),
     menu: e => menu(e, [
       ['Закрепить в Pinned', () => pinTab(t, 'pins')], ['Добавить в Essentials', () => pinTab(t, 'essentials')],
@@ -512,7 +524,7 @@ addEventListener('click', e => { if (!e.target.closest('#menu')) $('#menu').hidd
 const urlIn = $('#url');
 urlIn.onfocus = async () => { zlog.debug('url', 'focus', { newTabMode });
    const [c] = await chrome.tabs.query({ active: true, currentWindow: true }); if (!newTabMode && c) urlIn.value = c.pendingUrl || c.url || ''; urlIn.select(); };
-urlIn.onblur = () => { zlog.debug('url', 'blur'); newTabMode = false; schedule('urlblur'); };
+urlIn.onblur = () => { zlog.debug('url', 'blur'); newTabMode = false; tempUrl = false; applyPrefs(); schedule('urlblur'); };
 urlIn.onkeydown = async e => {
   if (e.key === 'Escape') return urlIn.blur();
   if (e.key !== 'Enter') return;
@@ -524,7 +536,14 @@ urlIn.onkeydown = async e => {
   zlog.info('url', 'submit done', { value: v });
   urlIn.blur();
 };
-$('#newtab').onclick = () => { zlog.info('ui', 'новая вкладка (поле адреса)'); newTabMode = true; urlIn.value = ''; urlIn.focus(); };
+$('#newtab').onclick = () => {
+  zlog.info('ui', 'новая вкладка (поле адреса)', { tempUrl: !prefs.showUrl });
+  newTabMode = true;
+  // Адресная строка отключена — показываем её временно; после ввода или потери фокуса она снова скрывается.
+  if (!prefs.showUrl) { tempUrl = true; applyPrefs(); }
+  urlIn.value = '';
+  urlIn.focus();
+};
 $('#back').onclick = async () => { zlog.info('ui', 'back'); const [t] = await chrome.tabs.query({ active: true, currentWindow: true }); if (t) chrome.tabs.goBack(t.id).catch(() => {}); };
 $('#fwd').onclick = async () => { zlog.info('ui', 'fwd'); const [t] = await chrome.tabs.query({ active: true, currentWindow: true }); if (t) chrome.tabs.goForward(t.id).catch(() => {}); };
 $('#reload').onclick = async () => { zlog.info('ui', 'reload'); const [t] = await chrome.tabs.query({ active: true, currentWindow: true }); if (t) chrome.tabs.reload(t.id); };
@@ -544,7 +563,13 @@ chrome.tabs.onMoved.addListener(tabLog('onMoved', (id, info) => ({ id, info })))
 chrome.tabs.onAttached.addListener(tabLog('onAttached', (id, info) => ({ id, info })));
 chrome.tabs.onDetached.addListener(tabLog('onDetached', (id, info) => ({ id, info })));
 chrome.storage.onChanged.addListener((ch, area) => {
-  if (area === 'local' && ch.s) { zlog.debug('storage', 's изменён (другим контекстом или нами)', { keys: Object.keys(ch) }); schedule('storage'); }
+  if (area !== 'local') return;
+  if (ch.prefs) {
+    prefs = { showTools: true, showUrl: true, ...(ch.prefs.newValue || {}) };
+    applyPrefs();
+    zlog.info('settings', 'preferences applied live', prefs);
+  }
+  if (ch.s) { zlog.debug('storage', 's изменён (другим контекстом или нами)', { keys: Object.keys(ch) }); schedule('storage'); }
 });
 document.addEventListener('visibilitychange', () => zlog.debug('window', 'visibility', { state: document.visibilityState }));
 addEventListener('focus', () => zlog.debug('window', 'focus'));
@@ -557,4 +582,4 @@ addEventListener('resize', () => zlog.debug('window', 'resize', { w: innerWidth,
 ].forEach(n => { window[n] = zlog.trace(n, window[n]); });
 
 zlog.info('boot', 'панель запущена', { version: chrome.runtime.getManifest().version, w: innerWidth, h: innerHeight, dark: matchMedia('(prefers-color-scheme: dark)').matches });
-render().catch(console.error);
+loadPrefs().then(() => render()).catch(console.error);

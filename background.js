@@ -58,6 +58,13 @@ async function syncTabs() {
 
 chrome.runtime.onInstalled.addListener(async details => {
   zlog.info('bg', 'onInstalled', details);
+  // Настройки доступны из контекстного меню самой иконки расширения.
+  await chrome.contextMenus.removeAll();
+  chrome.contextMenus.create({
+    id: 'zen-sidebar-settings',
+    title: 'Настройки Zen Sidebar',
+    contexts: ['action']
+  });
   await chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
   await syncTabs();
 });
@@ -109,3 +116,9 @@ chrome.commands.onCommand.addListener(cmd => { zlog.info('bg', 'command', { cmd 
   zlog.info('bg', 'workspace switch by command', { to: S.active, tab: t && t.id });
   if (t) await chrome.tabs.update(t.id, { active: true });
 }, 'command:' + cmd); });
+
+chrome.contextMenus.onClicked.addListener(info => {
+  if (info.menuItemId === 'zen-sidebar-settings') {
+    chrome.runtime.openOptionsPage();
+  }
+});

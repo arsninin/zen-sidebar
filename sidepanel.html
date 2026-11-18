@@ -7,14 +7,16 @@
 </head>
 <body>
   <header class="top">
-    <button class="icon" id="back" title="Назад">‹</button>
-    <button class="icon" id="fwd" title="Вперёд">›</button>
-    <button class="icon" id="reload" title="Обновить">↻</button>
-    <button class="icon" id="logbtn" title="Лог (Ctrl+Shift+L): скопировать для отчёта об ошибке">🐞</button>
+    <div id="toptools" class="toptools">
+      <button class="icon" id="back" title="Назад">‹</button>
+      <button class="icon" id="fwd" title="Вперёд">›</button>
+      <button class="icon" id="reload" title="Обновить">↻</button>
+      <button class="icon" id="logbtn" title="Лог (Ctrl+Shift+L): скопировать для отчёта об ошибке">🐞</button>
+    </div>
   </header>
-  <div class="urlbar"><input id="url" spellcheck="false" placeholder="Поиск или адрес"></div>
+  <div class="urlbar" id="urlbar"><input id="url" spellcheck="false" placeholder="Поиск или адрес"></div>
+  <hr id="topsep">
   <section id="essentials" class="essentials"></section>
-  <hr>
   <section id="pins" class="list"></section>
   <hr class="thin" id="pinsep">
   <button class="row newtab" id="newtab"><span class="plus">+</span><span>Новая вкладка</span></button>

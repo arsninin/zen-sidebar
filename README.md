@@ -1,4 +1,4 @@
-# Zen Sidebar (v1.0.10)
+# Zen Sidebar
 
 🌐 **Language / Язык:** [English](#english) | [Русский](#русский)
 

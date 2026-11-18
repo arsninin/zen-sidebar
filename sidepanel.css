@@ -44,3 +44,17 @@ hr{border:0;height:1px;background:var(--line);margin:2px 6px}hr.thin{margin:0 6p
 .lv-bar button{padding:5px 8px;border-radius:8px;background:var(--row);font-size:12px}
 .lv-bar button:hover{background:var(--hover)}
 #lv-text{flex:1;min-height:0;width:100%;resize:none;border:0;border-radius:10px;background:var(--row);color:var(--text);font:10.5px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:8px;outline:0;white-space:pre;overflow:auto;user-select:text;-webkit-user-select:text}
+
+/* ===== Прокрутка списка вкладок и настройки ===== */
+.list > .row{flex:0 0 36px}
+.scroll{scrollbar-width:thin;scrollbar-color:rgba(160,157,174,.55) transparent;overscroll-behavior:contain}
+.scroll::-webkit-scrollbar{width:7px}
+.scroll::-webkit-scrollbar-track{background:transparent}
+.scroll::-webkit-scrollbar-thumb{background:rgba(160,157,174,.48);border-radius:8px;border:2px solid transparent;background-clip:padding-box}
+.scroll::-webkit-scrollbar-thumb:hover{background:rgba(180,177,194,.75);border:2px solid transparent;background-clip:padding-box}
+.top{align-items:center;justify-content:space-between;min-height:30px}
+.toptools{display:flex;gap:2px;min-width:0}
+.top[hidden],#toptools[hidden],#urlbar[hidden],#topsep[hidden]{display:none!important}
+
+/* Нижняя панель Workspaces всегда прижата к низу, даже когда обычных вкладок нет */
+.spaces{margin-top:auto;flex:none}

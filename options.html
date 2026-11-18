@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Настройки Zen Sidebar</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <main class="card">
+    <header>
+      <div class="eyebrow">ZEN SIDEBAR</div>
+      <h1>Настройки</h1>
+      <p>Настрой внешний вид боковой панели.</p>
+    </header>
+    <label class="setting">
+      <span><b>Панель инструментов</b><small>Стрелки назад и вперёд, обновление и жучок</small></span>
+      <input type="checkbox" id="showtools" checked>
+    </label>
+    <label class="setting">
+      <span><b>Строка поиска и адреса</b><small>Поле для поиска и ввода URL</small></span>
+      <input type="checkbox" id="showurl" checked>
+    </label>
+    <div class="status" id="status" aria-live="polite">Изменения сохраняются автоматически</div>
+    <footer>Чтобы открыть эти настройки снова: нажми ПКМ по иконке Zen Sidebar на панели расширений и выбери «Настройки Zen Sidebar».</footer>
+  </main>
+  <script src="options.js"></script>
+</body>
+</html>

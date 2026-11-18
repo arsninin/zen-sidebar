@@ -1,15 +1,44 @@
 {
   "manifest_version": 3,
   "name": "Zen Sidebar",
-  "version": "1.0.9",
+  "version": "1.1.0",
   "description": "Вертикальные вкладки в стиле Zen Browser: Essentials, Pinned, Workspaces.",
-  "permissions": ["tabs", "sidePanel", "storage", "search", "favicon"],
-  "background": { "service_worker": "background.js" },
-  "side_panel": { "default_path": "sidepanel.html" },
-  "action": { "default_title": "Zen Sidebar" },
+  "permissions": [
+    "tabs",
+    "sidePanel",
+    "storage",
+    "search",
+    "favicon",
+    "contextMenus"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "options_page": "options.html",
+  "action": {
+    "default_title": "Zen Sidebar"
+  },
   "commands": {
-    "_execute_action": { "suggested_key": { "default": "Alt+S" }, "description": "Открыть/закрыть сайдбар" },
-    "next-workspace": { "suggested_key": { "default": "Alt+Period" }, "description": "Следующий Workspace" },
-    "prev-workspace": { "suggested_key": { "default": "Alt+Comma" }, "description": "Предыдущий Workspace" }
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Alt+S"
+      },
+      "description": "Открыть/закрыть сайдбар"
+    },
+    "next-workspace": {
+      "suggested_key": {
+        "default": "Alt+Period"
+      },
+      "description": "Следующий Workspace"
+    },
+    "prev-workspace": {
+      "suggested_key": {
+        "default": "Alt+Comma"
+      },
+      "description": "Предыдущий Workspace"
+    }
   }
 }
