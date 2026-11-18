@@ -1,0 +1,46 @@
+:root{--bg:#1b1a21;--row:rgba(255,255,255,.06);--hover:rgba(255,255,255,.08);--sel:rgba(255,255,255,.14);--text:#e8e6ef;--dim:#8f8c9c;--accent:#f76f53;--line:rgba(255,255,255,.08);--drop:#a9a6b5}
+@media (prefers-color-scheme:light){:root{--bg:#ece9f2;--row:rgba(0,0,0,.05);--hover:rgba(0,0,0,.07);--sel:rgba(0,0,0,.12);--text:#26242e;--dim:#6f6c7b;--line:rgba(0,0,0,.09);--drop:#6f6c7b}}
+*{box-sizing:border-box;margin:0}html,body{height:100%}body{background:var(--bg);color:var(--text);font:13px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif;display:flex;flex-direction:column;padding:8px;gap:8px;user-select:none;overflow:hidden}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}.top{display:flex;gap:2px}.icon{width:30px;height:30px;border-radius:8px;font-size:18px;color:var(--dim)}.icon:hover{background:var(--hover);color:var(--text)}
+.urlbar input{width:100%;height:36px;border:0;border-radius:12px;background:var(--row);color:var(--text);padding:0 12px;text-align:center;outline:0;font:inherit}.urlbar input:focus{text-align:left;box-shadow:0 0 0 2px var(--accent);background:var(--hover)}
+hr{border:0;height:1px;background:var(--line);margin:2px 6px}hr.thin{margin:0 6px;opacity:.6}.essentials{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.essentials:empty,.list:empty{display:none}.tile{height:50px;border-radius:12px;background:var(--row);display:grid;place-items:center;position:relative;transition:background .12s,transform .08s}.tile:hover{background:var(--hover)}.tile:active{transform:scale(.96)}.tile.on{background:var(--sel);box-shadow:inset 0 0 0 1.5px var(--accent)}.tile.dead img,.tile.dead .fb{opacity:.55}.tile img,.fb-lg{width:22px;height:22px;border-radius:5px}
+.list{display:flex;flex-direction:column;gap:2px}.scroll{overflow-y:auto;flex:1;min-height:0}.row{display:flex;align-items:center;gap:9px;height:36px;padding:0 8px;border-radius:10px;width:100%;text-align:left;position:relative}.row:hover{background:var(--hover)}.row.on{background:var(--sel)}.row.dead{opacity:.6}.row img,.fb{width:16px;height:16px;border-radius:4px;flex:none}.fb{display:grid;place-items:center;background:var(--accent);color:#fff;font-size:10px;font-weight:700}.tt{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:1px}.title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.slash{font-style:normal;color:var(--dim);margin-right:6px}.sub{display:none;font-size:10.5px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.x.reset::before{content:'';position:absolute;left:50%;top:50%;width:10px;height:2px;margin:-1px 0 0 -5px;border-radius:1px;background:currentColor}.tile.changed::after{content:'';position:absolute;right:6px;top:6px;width:6px;height:6px;border-radius:50%;background:var(--accent)}.x{width:22px;height:22px;border-radius:6px;display:none;place-items:center;color:var(--dim)}.row:hover .x{display:grid}.x:hover{background:var(--hover);color:var(--text)}.newtab{color:var(--dim)}.newtab .plus{width:16px;text-align:center;font-size:17px}.spaces{display:flex;justify-content:center;gap:4px;padding-top:6px;border-top:1px solid var(--line)}.sp{width:32px;height:32px;border-radius:10px;font-size:15px;filter:grayscale(1);opacity:.6;transition:all .12s}.sp:hover{background:var(--hover);opacity:1}.sp.on{filter:none;opacity:1;background:var(--sel)}.sp.add{filter:none;color:var(--dim);font-size:18px}.menu{position:fixed;z-index:9;min-width:180px;padding:5px;border-radius:12px;background:var(--bg);border:1px solid var(--line);box-shadow:0 8px 28px rgba(0,0,0,.35)}.menu button{display:block;width:100%;text-align:left;padding:8px 10px;border-radius:8px}.menu button:hover{background:var(--hover)}.menu .danger{color:var(--accent)}@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.lifted{opacity:.35}.show-empty .essentials:empty{display:grid;min-height:50px}.show-empty #pins:empty{display:flex;min-height:36px}.show-empty .essentials:empty,.show-empty #pins:empty{border:1.5px dashed var(--line);border-radius:12px}.drop-empty{border-color:var(--accent)!important}#dropline{position:fixed;z-index:8;pointer-events:none;background:var(--drop);border-radius:1px}#dropline[hidden]{display:none}#dropline::before{content:'';position:absolute;left:-2px;top:-3px;width:8px;height:8px;box-sizing:border-box;border:2px solid var(--drop);border-radius:50%;background:var(--bg)}#dropline.v::before{left:-3px;top:-5px}
+.dragging-any{cursor:grabbing}.lifted{opacity:.35}
+/* Плавное скольжение линии вставки */
+#dropline{transition:top .12s ease,left .12s ease,width .12s ease,height .12s ease}
+#dropline.snap{transition:none}
+@media (prefers-reduced-motion:reduce){#dropline{transition:none}}
+
+/* ===== Изменённая закреплённая вкладка ===== */
+.row.changed{height:36px;overflow:hidden}
+/* зона возврата: от левого края строки до слэша (иконка + отступ + слэш) */
+.row.changed .reset-zone{position:absolute;left:0;top:0;bottom:0;width:36px;border-radius:9px;cursor:pointer;background:transparent;transition:background .16s ease}
+.row.changed.zone-hover .reset-zone{background:var(--sel)}
+.row.changed.zone-hover .tt .slash{opacity:0}
+.row.changed .favicon{position:relative;z-index:1;width:20px;height:20px;border-radius:5px;pointer-events:none}
+.row.changed .tt.has-slash{position:relative;display:block;flex:1;min-width:0;height:36px;padding:0;pointer-events:none}
+.row.changed .tt .slash{position:absolute;left:0;top:10px;width:12px;margin:0;line-height:16px}
+.row.changed .tt .title{position:absolute;left:12px;right:0;top:10px;height:16px;line-height:16px;transition:top .2s cubic-bezier(.2,.8,.2,1),right .2s cubic-bezier(.2,.8,.2,1)}
+.row.changed .tt .sub{display:block;position:absolute;left:12px;right:0;top:20px;height:12px;line-height:12px;opacity:0;transform:translateY(3px);transition:opacity .16s ease,transform .2s cubic-bezier(.2,.8,.2,1),right .2s cubic-bezier(.2,.8,.2,1)}
+.row.changed:hover .tt .title,.row.changed:hover .tt .sub{right:28px}
+/* при наведении на зону: название поднимается, под ним выезжает подпись; по горизонтали ничего не двигается */
+.row.changed.zone-hover .tt .title{top:4px}
+.row.changed.zone-hover .tt .sub{opacity:1;transform:none}
+.row.changed .x.reset{display:grid;position:absolute;right:8px;top:7px;z-index:1;opacity:0;pointer-events:none;transition:opacity .14s ease,background .12s}
+.row.changed:hover .x.reset{opacity:1;pointer-events:auto}
+.row.changed .x.reset:hover{background:var(--sel);color:var(--text)}
+@media (prefers-reduced-motion:reduce){.row.changed *{transition:none!important}}
+
+/* ===== Окно лога ===== */
+#logbtn{margin-left:auto;font-size:13px;filter:grayscale(1);opacity:.55}
+#logbtn:hover{opacity:1}
+#logview{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;background:var(--bg);padding:8px;gap:6px}
+#logview[hidden]{display:none}
+.lv-bar{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.lv-bar b{font-size:13px}
+#lv-info{color:var(--dim);font-size:11px;margin-left:4px}
+.lv-fill{flex:1}
+.lv-bar button{padding:5px 8px;border-radius:8px;background:var(--row);font-size:12px}
+.lv-bar button:hover{background:var(--hover)}
+#lv-text{flex:1;min-height:0;width:100%;resize:none;border:0;border-radius:10px;background:var(--row);color:var(--text);font:10.5px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:8px;outline:0;white-space:pre;overflow:auto;user-select:text;-webkit-user-select:text}
